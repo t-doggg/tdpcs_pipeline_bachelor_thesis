@@ -25,13 +25,13 @@ Für die Nutzung der TDPCS-Pipeline müssen folgende Programme installiert sein:
 Repository herunterladen
 
 	1.	Klone oder lade das TDPCS-Repository von GitHub herunter:
- '''
+```bash
  git clone https://github.com/username/TDPCS.git
- '''
+```
  	2.	Navigiere ins Verzeichnis:
-  '''
+```bash
   cd TDPCS
-  '''
+```
 
 Systempfad festlegen
 
