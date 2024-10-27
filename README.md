@@ -12,17 +12,17 @@ Die Pipeline verarbeitet die Proben in mehreren Schritten:
 	•	Fast-Track: Klassifizierung über GTDB-Tk.
 	•	Detailed-Track: Nach der Host-Filterung werden alle Sequenzen >400 bp extrahiert und mittels einer lokalen BLAST-Suche weiter analysiert.
 
-Installation
+#Installation
 
-Voraussetzungen
+#Voraussetzungen
 
-Für die Nutzung der TDPCS-Pipeline müssen folgende Programme installiert sein:
+#Für die Nutzung der TDPCS-Pipeline müssen folgende Programme installiert sein:
 
-	1.	Minimap3: Download und Installation erforderlich, um Sequenzen zuzuordnen.
-	2.	NanoPhase Minimap Environment: Installiere die Umgebung gemäß den Anweisungen im NanoPhase GitHub Repository.
-	3.	BLAST Search Tool: Lade das Tool und die core_nt Datenbank herunter und installiere sie gemäß den offiziellen Anweisungen.
+	#1.	Minimap3: Download und Installation erforderlich, um Sequenzen zuzuordnen.
+	#2.	NanoPhase Minimap Environment: Installiere die Umgebung gemäß den Anweisungen im NanoPhase GitHub Repository.
+	#3.	BLAST Search Tool: Lade das Tool und die core_nt Datenbank herunter und installiere sie gemäß den offiziellen Anweisungen.
 
-Repository herunterladen
+#Repository herunterladen
 
 	1.	Klone oder lade das TDPCS-Repository von GitHub herunter:
 ```bash
