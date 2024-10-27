@@ -27,34 +27,34 @@ Repository herunterladen
 	1.	Klone oder lade das TDPCS-Repository von GitHub herunter:
 ```bash
  git clone https://github.com/username/TDPCS.git
-```
+
  	2.	Navigiere ins Verzeichnis:
 ```bash
   cd TDPCS
-```
+
 
 Systempfad festlegen
 
 Um die Pipeline bequem mit dem Befehl tdpcs auszuführen, sollte das tdpcs/shell/base-Verzeichnis in den Systempfad aufgenommen werden. Dies kann durch folgenden Befehl erreicht werden:
-'''
+```bash
 export PATH="/home/USER/tdpcs/shell/base:$PATH"
-'''
+
 	Hinweis: Ersetze USER durch deinen Benutzernamen.
 
 Nutzung
 
 Die TDPCS-Pipeline kann mit folgendem Befehl ausgeführt werden:
-'''
+```bash
 tdpcs -h
-'''
+
 Dieser Befehl zeigt eine Hilfsübersicht mit allen verfügbaren Befehlen und Parametern.
 
 Beispiel für die Analyse
 
 Ein typischer Analysebefehl sieht wie folgt aus:
-'''
+```bash
 tdpcs analyse -i /path/to/infq -o /path/to/outfolder -x /path/to/hostsequence -d /path/to/blastdatabase -t Threads -m MODE
-'''
+
 
 	•	-i: Pfad zur Eingabedatei im FastQ-Format
 	•	-o: Ausgabeverzeichnis für die Analyseergebnisse
@@ -75,11 +75,11 @@ Die TDPCS-Pipeline bietet verschiedene Ausführungsmodi, die Geschwindigkeit und
 Beispiele
 
 	1.	Fast and Single Run:
- '''
+```bash
  tdpcs analyse -i /data/sample.fastq -o /results -x /host/host_sequence.fasta -d /blast/db/core_nt -t 8 -m fs
- '''
+
 
  	2.	Long in Loop:
-  '''
+```bash
   tdpcs analyse -i /data/sample.fastq -o /results -x /host/host_sequence.fasta -d /blast/db/core_nt -t 16 -m ll
-  '''
+
