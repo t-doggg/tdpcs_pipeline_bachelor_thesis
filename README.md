@@ -12,6 +12,22 @@ Die Pipeline verarbeitet die Proben in mehreren Schritten:
 	•	Fast-Track: Klassifizierung über GTDB-Tk.
 	•	Detailed-Track: Nach der Host-Filterung werden alle Sequenzen >400 bp extrahiert und mittels einer lokalen BLAST-Suche weiter analysiert.
 
+Durch die Pipelines wird folgende Ordnerstruktur erstellt.
+├── 01-CleanUp
+│   ├── RawData
+│   ├── FilteredData
+│   └── Logs
+├── 02-DeNovo
+│   ├── Assemblies
+│   ├── Contigs
+│   └── QualityReports
+├── 03-[Weitere_Schritte]
+│   ├── [Subfolder_1]
+│   ├── [Subfolder_2]
+│   └── [Subfolder_N]
+└── README.md
+
+
 Installation
 
 Voraussetzungen
