@@ -13,6 +13,7 @@ Die TDPCS-Short Pipeline funktioniert wiefolgt::
 
 Durch die TDPCS-Short-Pipeline wird folgende Ordnerstruktur erstellt.
 
+```plaintext
 ├── 00-InputData  
 │   ├── RawData  
 ├── 01-CleanUp  
@@ -28,7 +29,7 @@ Durch die TDPCS-Short-Pipeline wird folgende Ordnerstruktur erstellt.
 ├── 05-Results  
 │   ├── Ausgabe-Datei der Ergebnisse als CSV-File (gefiltert)  
 ├────────────────────────  
-
+```
 
  Die TDPCS-Long Pipeline funktioniert wiefolgt::
 
@@ -38,18 +39,18 @@ Durch die TDPCS-Short-Pipeline wird folgende Ordnerstruktur erstellt.
 
 Durch die TDPCS-Long-Pipeline wird folgende Ordnerstruktur erstellt.
 
-├── 00-InputData
-│   ├── RawData
-├── 01-CleanUp
-│   ├── FilteredData
-├── 02-Classification
-│   ├── Klassifizierung von BLASTn
-│   ├── Ausgabe-Datei der Ergebnisse als TSV-File (ungefiltert)
-├── 03-Results
-│   ├── Ausgabe-Datei der Ergebnisse als CSV-File (gefiltert)
-├── 04-R-Skript
-│   ├── Übergabe an R-Skript zur Auswertung durch Plots
-├────────────────────────
+├── 00-InputData  
+│   ├── RawData  
+├── 01-CleanUp  
+│   ├── FilteredData  
+├── 02-Classification  
+│   ├── Klassifizierung von BLASTn  
+│   ├── Ausgabe-Datei der Ergebnisse als TSV-File (ungefiltert)  
+├── 03-Results  
+│   ├── Ausgabe-Datei der Ergebnisse als CSV-File (gefiltert)  
+├── 04-R-Skript  
+│   ├── Übergabe an R-Skript zur Auswertung durch Plots  
+├────────────────────────  
 
 
 
