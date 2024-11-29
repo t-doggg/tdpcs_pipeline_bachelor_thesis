@@ -3,61 +3,55 @@ Die TDPCS-Pipeline ist eine Analyse-Pipeline, die es ermöglicht, aus metagenomi
 
 Funktionsweise
 
-Die Pipeline verarbeitet die Proben in mehreren Schritten:
+Die TDPCS-Short Pipeline funktioniert wiefolgt::
 
 	1.	Host-Filterung: Entfernt Host-Zell-Sequenzen aus den Reads.
-	2.	De-novo Assembly: Erstellt ein de-novo Assembly der gefilterten Reads.
-	3.	Bin Refinement: Verfeinert die Bins für genauere Analysen.
-	4.	Klassifizierung: Die Klassifizierung erfolgt in zwei Varianten:
-	•	Fast-Track: Klassifizierung über GTDB-Tk.
-	•	Detailed-Track: Nach der Host-Filterung werden alle Sequenzen >400 bp extrahiert und mittels einer lokalen BLAST-Suche weiter analysiert.
+ 	2. 	Extraktion: Filtert alle Reads, welche nicht dem Referenzgenom zugeordnet werden können.
+	3.	De-novo Assembly: Erstellt ein de-novo Assembly der gefilterten Reads.
+	4.	Bin Refinement: Verfeinert die Bins für genauere Analysen.
+	5.	Klassifizierung: Die Klassifizierung erfolgt über GTDB-Tk.
 
-Durch die Pipelines wird folgende Ordnerstruktur erstellt.
-├── 01-CleanUp
+Durch die TDPCS-Short-Pipeline wird folgende Ordnerstruktur erstellt.
+
+├── 00-InputData
 │   ├── RawData
+├── 01-CleanUp
 │   ├── FilteredData
-│   └── Logs
 ├── 02-DeNovo
 │   ├── Assemblies
-│   ├── Contigs
-│   └── QualityReports
-├── 03-[Weitere_Schritte]
-│   ├── [Subfolder_1]
-│   ├── [Subfolder_2]
-│   └── [Subfolder_N]
-└── README.md
+├── 03-Bin
+│   ├── Binning
+│   ├── Bin-Refinement
+├── 04-Classification
+│   ├── Klassifizierung von GTDB-Tk
+│   ├── Ausgabe-Datei der Ergebnisse als TSV-File (ungefiltert)
+├── 05-Results
+│   ├── Ausgabe-Datei der Ergebnisse als CSV-File (gefiltert)
+├────────────────────────
 
 
-Installation
+ Die TDPCS-Long Pipeline funktioniert wiefolgt::
 
-Voraussetzungen
+	1.	Host-Filterung: Entfernt Host-Zell-Sequenzen aus den Reads.
+ 	2. 	Extraktion: Filtert alle Reads, welche nicht dem Referenzgenom zugeordnet werden können.
+	3.	Klassifizierung: Die Klassifizierung erfolgt über BLASTn.
 
-Für die Nutzung der TDPCS-Pipeline müssen folgende Programme installiert sein:
+Durch die TDPCS-Long-Pipeline wird folgende Ordnerstruktur erstellt.
 
-	1.	Minimap3: Download und Installation erforderlich, um Sequenzen zuzuordnen.
-	2.	NanoPhase Minimap Environment: Installiere die Umgebung gemäß den Anweisungen im NanoPhase GitHub Repository.
-	3.	BLAST Search Tool: Lade das Tool und die core_nt Datenbank herunter und installiere sie gemäß den offiziellen Anweisungen.
+├── 00-InputData
+│   ├── RawData
+├── 01-CleanUp
+│   ├── FilteredData
+├── 02-Classification
+│   ├── Klassifizierung von BLASTn
+│   ├── Ausgabe-Datei der Ergebnisse als TSV-File (ungefiltert)
+├── 03-Results
+│   ├── Ausgabe-Datei der Ergebnisse als CSV-File (gefiltert)
+├── 04-R-Skript
+│   ├── Übergabe an R-Skript zur Auswertung durch Plots
+├────────────────────────
 
-Repository herunterladen
 
-	1.	Klone oder lade das TDPCS-Repository von GitHub herunter:
-```bash
- git clone https://github.com/username/TDPCS.git
-```
-
- 	2.	Navigiere ins Verzeichnis:
-```bash
-  cd TDPCS
-```
-
-Systempfad festlegen
-
-Um die Pipeline bequem mit dem Befehl tdpcs auszuführen, sollte das tdpcs/shell/base-Verzeichnis in den Systempfad aufgenommen werden. Dies kann durch folgenden Befehl erreicht werden:
-```bash
-export PATH="/home/USER/tdpcs/shell/base:$PATH"
-```
-
-	Hinweis: Ersetze USER durch deinen Benutzernamen.
 
 Nutzung
 
