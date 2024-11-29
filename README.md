@@ -39,6 +39,7 @@ Durch die TDPCS-Short-Pipeline wird folgende Ordnerstruktur erstellt.
 
 Durch die TDPCS-Long-Pipeline wird folgende Ordnerstruktur erstellt.
 
+```plaintext
 ├── 00-InputData  
 │   ├── RawData  
 ├── 01-CleanUp  
@@ -51,7 +52,7 @@ Durch die TDPCS-Long-Pipeline wird folgende Ordnerstruktur erstellt.
 ├── 04-R-Skript  
 │   ├── Übergabe an R-Skript zur Auswertung durch Plots  
 ├────────────────────────  
-
+```
 
 
 Nutzung
