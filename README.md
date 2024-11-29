@@ -13,21 +13,21 @@ Die TDPCS-Short Pipeline funktioniert wiefolgt::
 
 Durch die TDPCS-Short-Pipeline wird folgende Ordnerstruktur erstellt.
 
-├── 00-InputData
-│   ├── RawData
-├── 01-CleanUp
-│   ├── FilteredData
-├── 02-DeNovo
-│   ├── Assemblies
-├── 03-Bin
-│   ├── Binning
-│   ├── Bin-Refinement
-├── 04-Classification
-│   ├── Klassifizierung von GTDB-Tk
-│   ├── Ausgabe-Datei der Ergebnisse als TSV-File (ungefiltert)
-├── 05-Results
-│   ├── Ausgabe-Datei der Ergebnisse als CSV-File (gefiltert)
-├────────────────────────
+├── 00-InputData  
+│   ├── RawData  
+├── 01-CleanUp  
+│   ├── FilteredData  
+├── 02-DeNovo  
+│   ├── Assemblies  
+├── 03-Bin  
+│   ├── Binning  
+│   ├── Bin-Refinement  
+├── 04-Classification  
+│   ├── Klassifizierung von GTDB-Tk  
+│   ├── Ausgabe-Datei der Ergebnisse als TSV-File (ungefiltert)  
+├── 05-Results  
+│   ├── Ausgabe-Datei der Ergebnisse als CSV-File (gefiltert)  
+├────────────────────────  
 
 
  Die TDPCS-Long Pipeline funktioniert wiefolgt::
