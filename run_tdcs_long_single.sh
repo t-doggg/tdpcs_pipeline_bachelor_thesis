@@ -199,20 +199,17 @@ fi
 
 #-------------------------------------------------------------------------------------------------------------------------------------
 
-# Wenn der Ordner $OUTDIR/05-Results bereits existiert, dann überspringe
-if [ -d "$OUTDIR/05-Results" ]; then
+# Wenn der Ordner $OUTDIR/03-ClResultsassification bereits existiert, dann überspringe
+if [ -d "$OUTDIR/03-Results" ]; then
 	echo "$(datetime.warning) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
-	echo "$(datetime.skip) Klassifizierung mit GTDB-Tk wird uebersprungen" >> "$G_LOG_FILE"
-	echo "$(datetime.skip) Klassifizierung mit GTDB-Tk wird uebersprungen" 
+	echo "$(datetime.skip) Klassifizierung mit BLASTn wird uebersprungen" >> "$G_LOG_FILE"
+	echo "$(datetime.skip) Klassifizierung mit BLASTn wird uebersprungen" 
 
-
-		# Erstelle das Verzeichnis, falls es nicht vorhanden ist
-		mkdir -p "$(dirname "$CLASSIFY_LOG")"
 
 else
 
 # Definiere den Pfad zur Protokolldatei für BLASTn
-BLASTN_LOG="$OUTDIR/05-Results/blastn.log"
+BLASTN_LOG="$OUTDIR/02-Classification/blastn.log"
 
 # Erstelle das Verzeichnis, falls es nicht vorhanden ist
 mkdir -p "$(dirname "$BLASTN_LOG")"
@@ -243,7 +240,7 @@ run_blastn() {
     filtered_fasta=$(filter_reads_by_length "$OUTDIR/01-CleanedReads/align_to_ref_unaligned.fa")
 
     # Ausgabe-TSV-Dateipfad festlegen
-    ncbi_unbinned_dir="$OUTDIR/05-Results/out_ncbi.tsv"
+    ncbi_unbinned_dir="$OUTDIR/02-Classification/out_ncbi.tsv"
 
     # Befehl für Blastn vorbereiten
     blastn -task megablast -db "$DATABASE_PATH" -num_threads "$THREADS" -outfmt '6 qseqid sacc stitle ssciname nident qlen' -max_target_seqs 1 -max_hsps 1 -query "$filtered_fasta" > "$ncbi_unbinned_dir"
@@ -260,45 +257,8 @@ run_blastn() {
 # Aufruf der Funktion
 run_blastn "$OUTDIR/01-CleanedReads/align_to_ref_unaligned.fa"
 
-#-------------------------------------------------------------------------------------------------------------------------------------
+fi
 
-
-### Klassifizierung mit BLASTn
-# Definiere den Pfad zur Protokolldatei für BLASTn
-BLASTN_LOG="$OUTDIR/05-Results/blastn.log"
-
-# Erstelle das Verzeichnis, falls es nicht vorhanden ist
-mkdir -p "$(dirname "$BLASTN_LOG")"
-
-# Ausgabe des Startzeitpunkts in die Protokolldatei für BLASTn
-echo "$(datetime.task) Starte BLASTn"
-echo "$(datetime.task) Starte BLASTn" >> "$BLASTN_LOG"
-echo "$(datetime.task) Starte BLASTn" >> "$G_LOG_FILE"
-echo "$(datetime.task) Suche nach Fasta in $OUTDIR/01-CleanedReads/align_to_ref_unaligned.fa" >> "$BLASTN_LOG"
-
-
-# Funktion zur Ausführung von BLASTn aufrufen
-run_blastn() {
-
-	# Ausgabe-TSV-Dateipfad festlegen
-	ncbi_unbinned_dir="$OUTDIR/05-Results/out_ncbi.tsv"
-
-
-	# Befehl für Blastn vorbereiten
-	blastn -task megablast -db "$DATABASE_PATH" -num_threads "$THREADS" -outfmt '6 qseqid sacc stitle ssciname nident qlen' -max_target_seqs 1 -max_hsps 1 -query "$OUTDIR/01-CleanedReads/align_to_ref_unaligned.fa" > "$ncbi_unbinned_dir"
-
-
-	# Ausgabe, dass der Vorgang abgeschlossen ist und Protokoll in die Datei schreiben für BLASTn
-	echo "$(datetime.done) BLASTn abgeschlossen." | tee -a "$BLASTN_LOG"
-	echo "$(datetime.done) BLASTn abgeschlossen" >> "$G_LOG_FILE"
-	echo "$(datetime.done) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
-
-	# Korrekter Pfad zur TSV-Datei zurückgeben
-	echo "$ncbi_unbinned_dir"
-}
-
-# Aufruf der Funktion
-run_blastn "$OUTDIR/01-CleanedReads/align_to_ref_unaligned.fa"
 #-------------------------------------------------------------------------------------------------------------------------------------
 
 # Ausgabe von BLAST neu anordnen
@@ -306,7 +266,7 @@ run_blastn "$OUTDIR/01-CleanedReads/align_to_ref_unaligned.fa"
 NCBI_RAW="$ncbi_unbinned_dir"
 
 # Verzeichnis, in dem sich die TSV-MODIFIED-Datei befinden wird
-NCBI_RESTRUCTURED="$OUTDIR/05-Results/res_ncbi.tsv"
+NCBI_RESTRUCTURED="$OUTDIR/03-Results/res_ncbi.tsv"
 
 # Pfad zum Verzeichnis des R-Skripts (Übergeordnetes Verzeichnis)
 R_SCRIPT_DIR="/home/drk/tdcs/R"
@@ -319,7 +279,7 @@ Rscript "$R_SCRIPT_DIR/restructure_raw_to_genus.R" "$NCBI_RAW" "$NCBI_RESTRUCTUR
 EINGABEDATEI="$NCBI_RESTRUCTURED"
 extract_output() {
     # Ausgabedatei im CSV-Format
-    AUSGABEDATEI="$OUTDIR/05-Results/res_ncbi.csv"
+    AUSGABEDATEI="$OUTDIR/03-Results/res_ncbi.csv"
 
     # Trennzeichen für die TSV-Datei
     TRENNZEICHEN=$'\t'
@@ -344,13 +304,15 @@ extract_output() {
 # Aufruf der Funktion zur Extraktion des NCBI-Output
 extract_output
 
+fi
+
 #-------------------------------------------------------------------------------------------------------------------------------------
 # Starte Shiny App zur Datenauswertung
 
 # Shiny App zur Datenauswertung
 shiny_gui() {
 	# Verzeichnis, in dem sich die CSV-Datei befindet
-	TSV_DIR="$OUTDIR/05-Results"
+	TSV_DIR="$OUTDIR/03-Results"
 
 	# Pfad zur CSV-Datei
 	TSV_FILE="$TSV_DIR/res_ncbi.csv"
@@ -359,7 +321,7 @@ shiny_gui() {
 	R_SCRIPT_DIR="/home/drk/tdcs/R"
 
 	# Definiere den Pfad zur Protokolldatei für BLASTn
-	RSCRIPT_LOG="$OUTDIR/05-Results/r_plots.log"
+	RSCRIPT_LOG="$OUTDIR/03-Results/r_plots.log"
 
 	# Erstelle das Verzeichnis, falls es nicht vorhanden ist
 	mkdir -p "$(dirname "$RSCRIPT_LOG")"
