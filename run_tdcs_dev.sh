@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Versionsnummer definieren
-VERSION="0.03b"
+VERSION="0.04b"
 
 INFQ="$2"
 OUTDIR="$4"
@@ -9,7 +9,7 @@ REFHUM="$6"
 DATABASE_PATH="$8"
 THREADS="${10}"
 
-### Pipeline Code
+### Pipeline Code zum testen verschiedener Tools
 
 ## Definition der Ausgaben:
 datetime.task(){ Date=$(date "+%Y-%m-%d %H:%M:%S"); echo "[$Date] TASK:"; }
@@ -28,12 +28,10 @@ datetime.done(){ Date=$(date "+%Y-%m-%d %H:%M:%S"); echo "[$Date] DONE:"; }
 #echo "THREADS: 		$THREADS"
 
 
-echo "  _____ _______ _____  _____     __ "
-echo " |  __ \__   __/ ____|/ ____|   /_ |"
-echo " | |  | | | | | |    | (_____   _| |"
-echo " | |  | | | | | |     \___ \ \ / / |"
-echo " | |__| | | | | |____ ____) \ V /| |"
-echo " |_____/  |_|  \_____|_____/ \_/ |_|"
+echo "▗▄▄▄ ▗▄▄▄▖▗▖  ▗▖"
+echo "▐▌  █▐▌   ▐▌  ▐▌"
+echo "▐▌  █▐▛▀▀▘▐▌  ▐▌"
+echo "▐▙▄▄▀▐▙▄▄▖ ▝▚▞▘ "
 
 
 # Start der Pipeline im Single Run.                  
@@ -43,7 +41,7 @@ echo "$(datetime.done) High Throughput Mode"
 
         echo "$(datetime.info) Starte Analyse-Pipeline SINGLE-RUN (BETA-MODE) bei letzter Analyse-Position"
 		 # Erstellen einer globalen Log-File
-		G_LOG_FILE="$OUTDIR/global_file.log"
+		# G_LOG_FILE="$OUTDIR/global_file.log"
 			
 		# Erstelle das Verzeichnis, falls es nicht vorhanden ist
 		mkdir -p "$(dirname "$G_LOG_FILE")"	
@@ -61,10 +59,10 @@ echo "$(datetime.done) High Throughput Mode"
 
 #-------------------------------------------------------------------------------------------------------------------------------------
 		# Überprüfen, ob die Datei $INFQ existiert
-		if [ ! -f "$INFQ" ]; then
-		    echo "$(datetime.error) Die Datei $INFQ existiert nicht. Das Skript wird abgebrochen."
-		    exit 1
-		fi
+		#if [ ! -f "$INFQ" ]; then
+		#    echo "$(datetime.error) Die Datei $INFQ existiert nicht. Das Skript wird abgebrochen."
+		#    exit 1
+		#fi
 		#-------------------------------------------------------------------------------------------------------------------------------------
 
 		# Wenn der Ordner $OUTDIR/01-CleanedReads bereits existiert, dann überspringe
@@ -158,13 +156,6 @@ echo "$(datetime.done) High Throughput Mode"
 			echo "$(datetime.done) Extrahieren nicht alignierter Reads abgeschlossen. Ausgabedaten in $OUTDIR/03-UnalignedReads" | tee -a "$UNALIGNED_LOG"
 			echo "$(datetime.done) Extrahieren nicht alignierter Reads abgeschlossen" >> "$G_LOG_FILE"
 			echo "$(datetime.done) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
-			echo "$(datetime.done)  ___ ___  ____  ____   ____  ___ ___   ____  ____       ___     ___   ____     ___ "
-			echo "$(datetime.done) |   |   ||    ||    \ |    ||   |   | /    ||    \     |   \   /   \ |    \   /  _]"
-			echo "$(datetime.done) | _   _ | |  | |  _  | |  | | _   _ ||  o  ||  o  )    |    \ |     ||  _  | /  [_ "
-			echo "$(datetime.done) |  \_/  | |  | |  |  | |  | |  \_/  ||     ||   _/     |  D  ||  O  ||  |  ||    _]"
-			echo "$(datetime.done) |   |   | |  | |  |  | |  | |   |   ||  _  ||  |       |     ||     ||  |  ||   [_ "
-			echo "$(datetime.done) |   |   | |  | |  |  | |  | |   |   ||  |  ||  |       |     ||     ||  |  ||     |"
-			echo "$(datetime.done) |___|___||____||__|__||____||___|___||__|__||__|       |_____| \___/ |__|__||_____|"
 
 		fi
 		#-------------------------------------------------------------------------------------------------------------------------------------
@@ -210,13 +201,6 @@ echo "$(datetime.done) High Throughput Mode"
 			echo "$(datetime.done) De-Novo-Assembly abgeschlossen. Ausgabedaten in $OUTDIR/02-De_Novo_Assembly/Flye" | tee -a "$FLYE_LOG"
 			echo "$(datetime.done) De-Novo-Assembly abgeschlossen. Ausgabedaten in $OUTDIR/02-De_Novo_Assembly/Flye" >> "$G_LOG_FILE"
 			echo "$(datetime.done) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
-			echo "$(datetime.done)  _____  _      __ __    ___      ___     ___   ____     ___ "
-			echo "$(datetime.done) |     || |    |  |  |  /  _]    |   \   /   \ |    \   /  _]"
-			echo "$(datetime.done) |   __|| |    |  |  | /  [_     |    \ |     ||  _  | /  [_ "
-			echo "$(datetime.done) |  |_  | |___ |  ~  ||    _]    |  D  ||  O  ||  |  ||    _]"
-			echo "$(datetime.done) |   _] |     ||___, ||   [_     |     ||     ||  |  ||   [_ "
-			echo "$(datetime.done) |  |   |     ||     ||     |    |     ||     ||  |  ||     |"
-			echo "$(datetime.done) |__|   |_____||____/ |_____|    |_____| \___/ |__|__||_____|"
 		fi
 		#-------------------------------------------------------------------------------------------------------------------------------------
 
@@ -254,9 +238,6 @@ echo "$(datetime.done) High Throughput Mode"
 			echo "$(datetime.done) Binning mit Metawrap abgeschlossen. Ausgabedaten in $OUTDIR/03-Bins/Binning" | tee -a "$BINNING_LOG"
 			echo "$(datetime.done) Binning mit Metawrap abgeschlossen" >> "$G_LOG_FILE"
 			echo "$(datetime.done) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
-
-			
-			
 			
 			### Binning-Verfeinerung mit Metawrap
 
@@ -325,14 +306,7 @@ echo "$(datetime.done) High Throughput Mode"
 			# Ausgabe, dass der Vorgang abgeschlossen ist und Protokoll in die Datei schreiben für die Split-Funktion
 			echo "$(datetime.done) Split-Funktion abgeschlossen." | tee -a "$SPLIT_LOG"
 			echo "$(datetime.done) Split-Funktion abgeschlossen" >> "$G_LOG_FILE"
-			echo "$(datetime.done) ------------------------------------------------------------------------------" >> "$G_LOG_FILE"
-			echo "$(datetime.done)  ___ ___    ___ ______   ____  __    __  ____    ____  ____       ___     ___   ____     ___ "
-			echo "$(datetime.done) |   |   |  /  _]      | /    ||  |__|  ||    \  /    ||    \     |   \   /   \ |    \   /  _]"
-			echo "$(datetime.done) | _   _ | /  [_|      ||  o  ||  |  |  ||  D  )|  o  ||  o  )    |    \ |     ||  _  | /  [_ "
-			echo "$(datetime.done) |  \_/  ||    _]_|  |_||     ||  |  |  ||    / |     ||   _/     |  D  ||  O  ||  |  ||    _]"
-			echo "$(datetime.done) |   |   ||   [_  |  |  |  _  ||        ||    \ |  _  ||  |       |     ||     ||  |  ||   [_ "
-			echo "$(datetime.done) |   |   ||     | |  |  |  |  | \      / |  .  \|  |  ||  |       |     ||     ||  |  ||     |"
-			echo "$(datetime.done) |___|___||_____| |__|  |__|__|  \_/\_/  |__|\_||__|__||__|       |_____| \___/ |__|__||_____|"
+			# echo "$(datetime.done) ------------------------------------------------------------------------------" >> "$G_LOG_FILE"
 		fi
 		#-------------------------------------------------------------------------------------------------------------------------------------
 
