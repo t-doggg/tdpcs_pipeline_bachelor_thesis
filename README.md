@@ -62,7 +62,7 @@ Durch die TDPCS-Short-Pipeline wird folgende Ordnerstruktur erstellt.
 ```plaintext
 ├── 00-InputData  
 │   ├── RawData  
-├── 01-CleanUp  
+├── 01-CleanedReads  
 │   ├── FilteredData  
 ├── 02-DeNovo  
 │   ├── Assemblies  
@@ -88,7 +88,7 @@ Durch die TDPCS-Long-Pipeline wird folgende Ordnerstruktur erstellt.
 ```plaintext
 ├── 00-InputData  
 │   ├── RawData  
-├── 01-CleanUp  
+├── 01-CleanedReads  
 │   ├── FilteredData  
 ├── 02-Classification  
 │   ├── Klassifizierung von BLASTn  
