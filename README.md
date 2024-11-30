@@ -26,9 +26,9 @@ Analyse Requirements: Führt die Analyse mit den angegebenen Optionen aus:
      Modus: `fs`, `fl`, `ll` oder `ls` (Standard: `fs`).
 ```
 
-```plaintext
-./base `-v`  
-     Zeigt die aktuelle Version von `tdcs` an.
+Zeigt aktuellste Versionsnummer der TDPCS-Pipelines an:
+```bash
+./base -v
 ```
 
 Beispiel für die Analyse
