@@ -1,14 +1,35 @@
 # tdpcs_pipeline_bachelor_thesis
-Die TDPCS-Pipeline ist eine Analyse-Pipeline, die es ermöglicht, aus metagenomischen Proben spezifische Bakterien zu identifizieren. Diese Pipeline wurde im Rahmen der Bachelorarbeit von Timo Dinse entwickelt.
+Die TDPCS-Pipelines sind Analyse-Pipelines, die es ermöglichen, aus metagenomischen Proben spezifische Bakterien zu identifizieren. Diese Pipelines wurde im Rahmen der Bachelorarbeit von Timo Dinse entwickelt.
 
 Nutzung
 
-Die TDPCS-Pipeline kann mit folgendem Befehl ausgeführt werden:
+Die TDPCS-Pipelines kann mit folgendem Befehl ausgeführt werden:
 ```bash
-tdpcs -h
+./base -h
 ```
 
 Dieser Befehl zeigt eine Hilfsübersicht mit allen verfügbaren Befehlen und Parametern.
+
+```plaintext
+Analyse Requirements: Führt die Analyse mit den angegebenen Optionen aus:
+   - `-i EINGABEDATEI`  
+     Die Eingabedatei im FASTQ-Format.
+   - `-o AUSGABEVERZEICHNIS`  
+     Das Ausgabeverzeichnis für die Ergebnisse.
+   - `-x REFERENZDATEI`  
+     Die Referenzdatei im FASTA-Format.
+   - `-d DATENBANK_PFAD`  
+     Der Pfad zur NCBI-Datenbank.
+   - `-t THREADS` (optional)  
+     Anzahl der Threads für die Analyse.
+   - `-m MODE`  
+     Modus: `fs`, `fl`, `ll` oder `ls` (Standard: `fs`).
+```
+
+```plaintext
+   - ./base `-v`  
+     Zeigt die aktuelle Version von `tdcs` an.
+```
 
 Beispiel für die Analyse
 
