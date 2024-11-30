@@ -95,8 +95,8 @@ else
 fi
 #-------------------------------------------------------------------------------------------------------------------------------------
 
-# Wenn der Ordner $OUTDIR/02-De_Novo_Assembly bereits existiert, dann überspringe folgender Task
-if [ -d "$OUTDIR/02-De_Novo_Assembly" ]; then
+# Wenn der Ordner $OUTDIR/02-Classification bereits existiert, dann überspringe folgender Task
+if [ -d "$OUTDIR/02-Classification" ]; then
 	echo "$(datetime.warning) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
 	echo "$(datetime.warning) Alignment gegen Human Referenzgenom wird uebersprungen" >> "$G_LOG_FILE"
 	echo "$(datetime.skip) Alignment gegen Human Referenzgenom wird uebersprungen" 
