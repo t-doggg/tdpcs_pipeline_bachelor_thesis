@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Versionsnummer definieren
-VERSION="0.03b"
+VERSION="0.04b"
 
 # Conda initialisieren
 echo "Initialisiere Conda..."
