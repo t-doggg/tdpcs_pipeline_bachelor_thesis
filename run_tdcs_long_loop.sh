@@ -112,20 +112,20 @@ while true; do
 	fi
 	#-------------------------------------------------------------------------------------------------------------------------------------
 
-	# Wenn der Ordner $OUTDIR/02-De_Novo_Assembly bereits existiert, dann überspringe
-	if [ -d "$OUTDIR/02-De_Novo_Assembly" ]; then
+	# Wenn der Ordner $OUTDIR/02-Classification bereits existiert, dann überspringe folgender Task
+	if [ -d "$OUTDIR/02-Classification" ]; then
 		echo "$(datetime.warning) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
 		echo "$(datetime.warning) Alignment gegen Human Referenzgenom wird uebersprungen" >> "$G_LOG_FILE"
 		echo "$(datetime.skip) Alignment gegen Human Referenzgenom wird uebersprungen" 
 	else
 		#### Alignment gegen Human Referenzgenom
-		# Definiere den Pfad zur Protokolldatei
+		# Definiere den Pfad zur Protokolldatei des Mappings
 		ALIGN_LOG="$OUTDIR/01-CleanedReads/align_to_human_ref.log"
 
 		# Erstelle das Verzeichnis, falls es nicht vorhanden ist
 		mkdir -p "$(dirname "$ALIGN_LOG")"
 
-		# Überprüfe, ob alle erforderlichen Variablen gesetzt sind
+		# Überprüfe, ob alle erforderlichen Variablen gesetzt wurden
 		if [ -z "$OUTDIR" ] || [ -z "$THREADS" ] || [ -z "$REFHUM" ]; then
 			echo "$(datetime.error) Erforderliche Variablen fehlen."
 			exit 1
@@ -146,7 +146,7 @@ while true; do
 		echo "$(datetime.done) Alignment zu $REFHUM abgeschlossen. Ausgabedaten in $OUTDIR/01-CleanedReads" | tee -a "$ALIGN_LOG"
 		echo "$(datetime.done) Alignment gegen $REFHUM abgeschlossen" >> "$G_LOG_FILE"
 		echo "$(datetime.done) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
-		#-------------------------------------------------------------------------------------------------------------------------------------
+	#-------------------------------------------------------------------------------------------------------------------------------------
 		#### Extraktion der unaligned Reads aus der Bam-Datei
 		# Definiere den Pfad zur Protokolldatei
 		UNALIGNED_LOG="$OUTDIR/01-CleanedReads/extract_unaligned_reads.log"
