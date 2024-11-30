@@ -27,7 +27,7 @@ Analyse Requirements: Führt die Analyse mit den angegebenen Optionen aus:
 ```
 
 ```plaintext
-   - ./base `-v`  
+./base `-v`  
      Zeigt die aktuelle Version von `tdcs` an.
 ```
 
