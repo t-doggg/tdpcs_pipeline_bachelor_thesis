@@ -199,7 +199,7 @@ fi
 
 #-------------------------------------------------------------------------------------------------------------------------------------
 
-# Wenn der Ordner $OUTDIR/03-ClResultsassification bereits existiert, dann überspringe
+# Wenn der Ordner $OUTDIR/03-Results bereits existiert, dann überspringe
 if [ -d "$OUTDIR/03-Results" ]; then
 	echo "$(datetime.warning) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
 	echo "$(datetime.skip) Klassifizierung mit BLASTn wird uebersprungen" >> "$G_LOG_FILE"
@@ -208,54 +208,56 @@ if [ -d "$OUTDIR/03-Results" ]; then
 
 else
 
-# Definiere den Pfad zur Protokolldatei für BLASTn
-BLASTN_LOG="$OUTDIR/02-Classification/blastn.log"
+	# Definiere den Pfad zur Protokolldatei für BLASTn
+	BLASTN_LOG="$OUTDIR/02-Classification/blastn.log"
 
-# Erstelle das Verzeichnis, falls es nicht vorhanden ist
-mkdir -p "$(dirname "$BLASTN_LOG")"
+	# Erstelle das Verzeichnis, falls es nicht vorhanden ist
+	mkdir -p "$(dirname "$BLASTN_LOG")"
 
-# Ausgabe des Startzeitpunkts in die Protokolldatei für BLASTn
-echo "$(datetime.task) Starte BLASTn"
-echo "$(datetime.task) Starte BLASTn" >> "$BLASTN_LOG"
-echo "$(datetime.task) Starte BLASTn" >> "$G_LOG_FILE"
-echo "$(datetime.task) Suche nach Fasta in $OUTDIR/01-CleanedReads/align_to_ref_unaligned.fa" >> "$BLASTN_LOG"
+	# Ausgabe des Startzeitpunkts in die Protokolldatei für BLASTn
+	echo "$(datetime.task) Starte BLASTn"
+	echo "$(datetime.task) Starte BLASTn" >> "$BLASTN_LOG"
+	echo "$(datetime.task) Starte BLASTn" >> "$G_LOG_FILE"
+	echo "$(datetime.task) Suche nach Fasta in $OUTDIR/01-CleanedReads/align_to_ref_unaligned_filtered.fa" >> "$BLASTN_LOG"
 
-# Funktion zum Filtern der Reads nach Länge (>= 400 bp)
-filter_reads_by_length() {
-    input_fasta="$1"
-    output_fasta="$OUTDIR/01-CleanedReads/align_to_ref_unaligned_filtered.fa"
-    min_length=400
+	# Funktion zum Filtern der Reads nach Länge (>= 400 bp)
+	filter_reads_by_length() {
+	    input_fasta="$1"
+	    output_fasta="$OUTDIR/01-CleanedReads/align_to_ref_unaligned_filtered.fa"
+	    min_length=400
 
-    # Filter: nur Reads >= 400 bp in neue Datei schreiben
-    awk '/^>/ {header=$0; next} length($0) >= min_length {print header; print $0}' min_length="$min_length" "$input_fasta" > "$output_fasta"
+	    # Filter: nur Reads >= 400 bp in neue Datei schreiben
+	    awk '/^>/ {header=$0; next} length($0) >= min_length {print header; print $0}' min_length="$min_length" "$input_fasta" > "$output_fasta"
 
-    echo "$(datetime.done) Längenfilter angewendet. Neue Datei: $output_fasta" | tee -a "$BLASTN_LOG"
-    echo "$output_fasta"
-}
+	    echo "$(datetime.done) Längenfilter angewendet. Neue Datei: $output_fasta" | tee -a "$BLASTN_LOG"
+	    echo "$output_fasta"
+	}
 
-# Funktion zur Ausführung von BLASTn aufrufen
-run_blastn() {
+	# Funktion zur Ausführung von BLASTn aufrufen
+	run_blastn() {
 
-    # Anwendung des Längenfilters auf die ursprüngliche Datei
-    filtered_fasta=$(filter_reads_by_length "$OUTDIR/01-CleanedReads/align_to_ref_unaligned.fa")
+	    # Anwendung des Längenfilters auf die ursprüngliche Datei
+	    filtered_fasta=$(filter_reads_by_length "$OUTDIR/01-CleanedReads/align_to_ref_unaligned.fa")
 
-    # Ausgabe-TSV-Dateipfad festlegen
-    ncbi_unbinned_dir="$OUTDIR/02-Classification/out_ncbi.tsv"
+		filtered_fasta="$OUTDIR/01-CleanedReads/align_to_ref_unaligned.fa"
 
-    # Befehl für Blastn vorbereiten
-    blastn -task megablast -db "$DATABASE_PATH" -num_threads "$THREADS" -outfmt '6 qseqid sacc stitle ssciname nident qlen' -max_target_seqs 1 -max_hsps 1 -query "$filtered_fasta" > "$ncbi_unbinned_dir"
+	    # Ausgabe-TSV-Dateipfad festlegen
+	    ncbi_unbinned_dir="$OUTDIR/02-Classification/out_ncbi.tsv"
 
-    # Ausgabe, dass der Vorgang abgeschlossen ist und Protokoll in die Datei schreiben für BLASTn
-    echo "$(datetime.done) BLASTn abgeschlossen." | tee -a "$BLASTN_LOG"
-    echo "$(datetime.done) BLASTn abgeschlossen" >> "$G_LOG_FILE"
-    echo "$(datetime.done) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
+	    # Befehl für Blastn vorbereiten
+	    #blastn -task megablast -db "$DATABASE_PATH" -num_threads "$THREADS" -outfmt '6 qseqid sacc stitle ssciname nident qlen' -max_target_seqs 1 -max_hsps 1 -query "$filtered_fasta" > "$ncbi_unbinned_dir"
 
-    # Korrekter Pfad zur TSV-Datei zurückgeben
-    echo "$ncbi_unbinned_dir"
-}
+	    # Ausgabe, dass der Vorgang abgeschlossen ist und Protokoll in die Datei schreiben für BLASTn
+	    echo "$(datetime.done) BLASTn abgeschlossen." | tee -a "$BLASTN_LOG"
+	    echo "$(datetime.done) BLASTn abgeschlossen" >> "$G_LOG_FILE"
+	    echo "$(datetime.done) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
 
-# Aufruf der Funktion
-run_blastn "$OUTDIR/01-CleanedReads/align_to_ref_unaligned.fa"
+	    # Korrekter Pfad zur TSV-Datei zurückgeben
+	    echo "$ncbi_unbinned_dir"
+	}
+
+	# Aufruf der Funktion
+	run_blastn "$OUTDIR/01-CleanedReads/align_to_ref_unaligned_filtered.fa"
 
 fi
 
@@ -263,7 +265,7 @@ fi
 
 # Ausgabe von BLAST neu anordnen
 # Verzeichnis, in dem sich die TSV-RAW-Datei befindet
-NCBI_RAW="$ncbi_unbinned_dir"
+NCBI_RAW="$OUTDIR/02-Classification/out_ncbi.tsv"
 
 # Verzeichnis, in dem sich die TSV-MODIFIED-Datei befinden wird
 NCBI_RESTRUCTURED="$OUTDIR/03-Results/res_ncbi.tsv"
@@ -273,38 +275,7 @@ R_SCRIPT_DIR="/home/drk/tdcs/R"
 
 # Rufe das R-Skript auf und übergebe den Pfad zur Ausgabedatei
 Rscript "$R_SCRIPT_DIR/restructure_raw_to_genus.R" "$NCBI_RAW" "$NCBI_RESTRUCTURED"
- 
-#-------------------------------------------------------------------------------------------------------------------------------------
-# Eingabedatei
-EINGABEDATEI="$NCBI_RESTRUCTURED"
-extract_output() {
-    # Ausgabedatei im CSV-Format
-    AUSGABEDATEI="$OUTDIR/03-Results/res_ncbi.csv"
 
-    # Trennzeichen für die TSV-Datei
-    TRENNZEICHEN=$'\t'
-
-    # Leere Ausgabedatei erstellen
-    touch $AUSGABEDATEI
-
-    # Header in die Ausgabedatei schreiben (CSV-Format)
-    echo "Stamm,Count" > $AUSGABEDATEI
-
-    # Ergebnisdatei zeilenweise verarbeiten (ohne Header)
-    tail -n +2 "$EINGABEDATEI" | while IFS=$'\t' read -r GENUS TOTAL_COUNT; do
-        # Ersetze alle Kommas in den Feldern durch Punkte
-        GENUS=$(echo "$GENUS" | sed 's/,/./g')
-        TOTAL_COUNT=$(echo "$TOTAL_COUNT" | sed 's/,/./g')
-        
-        # Genus und Zählwert in die Ausgabedatei schreiben (im CSV-Format)
-        echo "$GENUS,$TOTAL_COUNT" >> $AUSGABEDATEI
-    done
-}
-
-# Aufruf der Funktion zur Extraktion des NCBI-Output
-extract_output
-
-fi
 
 #-------------------------------------------------------------------------------------------------------------------------------------
 # Starte Shiny App zur Datenauswertung
@@ -357,9 +328,5 @@ shiny_gui
 
 
 
-fi
-
-
 
 #-------------------------------------------------------------------------------------------------------------------------------------
-
