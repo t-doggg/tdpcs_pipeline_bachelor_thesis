@@ -1,4 +1,5 @@
 # TDPCS-Analysis - Enhanced Version
+# Debugging ist noch im Code enthalten. User bekommt nochmals Feedback zum übergebenem Pfad.
 
 # Lade die benötigten Pakete
 library("shiny")
