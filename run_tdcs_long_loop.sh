@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Versionsnummer definieren
-VERSION="0.04b"
+VERSION="0.09a"
 
 INFQ="$2"
 OUTDIR="$4"
@@ -112,20 +112,20 @@ while true; do
 	fi
 	#-------------------------------------------------------------------------------------------------------------------------------------
 
-	# Wenn der Ordner $OUTDIR/02-Classification bereits existiert, dann überspringe folgender Task
-	if [ -d "$OUTDIR/02-Classification" ]; then
+	# Wenn der Ordner $OUTDIR/02-De_Novo_Assembly bereits existiert, dann überspringe
+	if [ -d "$OUTDIR/02-De_Novo_Assembly" ]; then
 		echo "$(datetime.warning) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
 		echo "$(datetime.warning) Alignment gegen Human Referenzgenom wird uebersprungen" >> "$G_LOG_FILE"
 		echo "$(datetime.skip) Alignment gegen Human Referenzgenom wird uebersprungen" 
 	else
 		#### Alignment gegen Human Referenzgenom
-		# Definiere den Pfad zur Protokolldatei des Mappings
+		# Definiere den Pfad zur Protokolldatei
 		ALIGN_LOG="$OUTDIR/01-CleanedReads/align_to_human_ref.log"
 
 		# Erstelle das Verzeichnis, falls es nicht vorhanden ist
 		mkdir -p "$(dirname "$ALIGN_LOG")"
 
-		# Überprüfe, ob alle erforderlichen Variablen gesetzt wurden
+		# Überprüfe, ob alle erforderlichen Variablen gesetzt sind
 		if [ -z "$OUTDIR" ] || [ -z "$THREADS" ] || [ -z "$REFHUM" ]; then
 			echo "$(datetime.error) Erforderliche Variablen fehlen."
 			exit 1
@@ -146,7 +146,7 @@ while true; do
 		echo "$(datetime.done) Alignment zu $REFHUM abgeschlossen. Ausgabedaten in $OUTDIR/01-CleanedReads" | tee -a "$ALIGN_LOG"
 		echo "$(datetime.done) Alignment gegen $REFHUM abgeschlossen" >> "$G_LOG_FILE"
 		echo "$(datetime.done) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
-	#-------------------------------------------------------------------------------------------------------------------------------------
+		#-------------------------------------------------------------------------------------------------------------------------------------
 		#### Extraktion der unaligned Reads aus der Bam-Datei
 		# Definiere den Pfad zur Protokolldatei
 		UNALIGNED_LOG="$OUTDIR/01-CleanedReads/extract_unaligned_reads.log"
@@ -211,165 +211,137 @@ while true; do
 		echo "$(datetime.done) |___|___||____||__|__||____||___|___||__|__||__|       |_____| \___/ |__|__||_____|"
 
 	fi
-#-------------------------------------------------------------------------------------------------------------------------------------
+	#-------------------------------------------------------------------------------------------------------------------------------------
+
+	#-------------------------------------------------------------------------------------------------------------------------------------
+
+	# Wenn der Ordner $OUTDIR/03-Results bereits existiert, dann überspringe
+	if [ -d "$OUTDIR/03-Results" ]; then
+		echo "$(datetime.warning) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
+		echo "$(datetime.skip) Klassifizierung mit BLASTn wird uebersprungen" >> "$G_LOG_FILE"
+		echo "$(datetime.skip) Klassifizierung mit BLASTn wird uebersprungen" 
 
 
-#-------------------------------------------------------------------------------------------------------------------------------------
+	else
 
-# Wenn der Ordner $OUTDIR/03-ClResultsassification bereits existiert, dann überspringe
-if [ -d "$OUTDIR/03-Results" ]; then
-	echo "$(datetime.warning) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
-	echo "$(datetime.skip) Klassifizierung mit BLASTn wird uebersprungen" >> "$G_LOG_FILE"
-	echo "$(datetime.skip) Klassifizierung mit BLASTn wird uebersprungen" 
+		# Definiere den Pfad zur Protokolldatei für BLASTn
+		BLASTN_LOG="$OUTDIR/02-Classification/blastn.log"
 
+		# Erstelle das Verzeichnis, falls es nicht vorhanden ist
+		mkdir -p "$(dirname "$BLASTN_LOG")"
 
-else
+		# Ausgabe des Startzeitpunkts in die Protokolldatei für BLASTn
+		echo "$(datetime.task) Starte BLASTn"
+		echo "$(datetime.task) Starte BLASTn" >> "$BLASTN_LOG"
+		echo "$(datetime.task) Starte BLASTn" >> "$G_LOG_FILE"
+		echo "$(datetime.task) Suche nach Fasta in $OUTDIR/01-CleanedReads/align_to_ref_unaligned_filtered.fa" >> "$BLASTN_LOG"
 
-# Definiere den Pfad zur Protokolldatei für BLASTn
-BLASTN_LOG="$OUTDIR/02-Classification/blastn.log"
+		# Funktion zum Filtern der Reads nach Länge (>= 400 bp)
+		filter_reads_by_length() {
+		    input_fasta="$1"
+		    output_fasta="$OUTDIR/01-CleanedReads/align_to_ref_unaligned_filtered.fa"
+		    min_length=400
 
-# Erstelle das Verzeichnis, falls es nicht vorhanden ist
-mkdir -p "$(dirname "$BLASTN_LOG")"
+		    # Filter: nur Reads >= 400 bp in neue Datei schreiben
+		    awk '/^>/ {header=$0; next} length($0) >= min_length {print header; print $0}' min_length="$min_length" "$input_fasta" > "$output_fasta"
 
-# Ausgabe des Startzeitpunkts in die Protokolldatei für BLASTn
-echo "$(datetime.task) Starte BLASTn"
-echo "$(datetime.task) Starte BLASTn" >> "$BLASTN_LOG"
-echo "$(datetime.task) Starte BLASTn" >> "$G_LOG_FILE"
-echo "$(datetime.task) Suche nach Fasta in $OUTDIR/01-CleanedReads/align_to_ref_unaligned.fa" >> "$BLASTN_LOG"
+		    echo "$(datetime.done) Längenfilter angewendet. Neue Datei: $output_fasta" | tee -a "$BLASTN_LOG"
+		    echo "$output_fasta"
+		}
 
-# Funktion zum Filtern der Reads nach Länge (>= 400 bp)
-filter_reads_by_length() {
-    input_fasta="$1"
-    output_fasta="$OUTDIR/01-CleanedReads/align_to_ref_unaligned_filtered.fa"
-    min_length=400
+		# Funktion zur Ausführung von BLASTn aufrufen
+		run_blastn() {
 
-    # Filter: nur Reads >= 400 bp in neue Datei schreiben
-    awk '/^>/ {header=$0; next} length($0) >= min_length {print header; print $0}' min_length="$min_length" "$input_fasta" > "$output_fasta"
+		    # Anwendung des Längenfilters auf die ursprüngliche Datei
+		    filtered_fasta=$(filter_reads_by_length "$OUTDIR/01-CleanedReads/align_to_ref_unaligned.fa")
 
-    echo "$(datetime.done) Längenfilter angewendet. Neue Datei: $output_fasta" | tee -a "$BLASTN_LOG"
-    echo "$output_fasta"
-}
+			filtered_fasta="$OUTDIR/01-CleanedReads/align_to_ref_unaligned.fa"
 
-# Funktion zur Ausführung von BLASTn aufrufen
-run_blastn() {
+		    # Ausgabe-TSV-Dateipfad festlegen
+		    ncbi_unbinned_dir="$OUTDIR/02-Classification/out_ncbi.tsv"
 
-    # Anwendung des Längenfilters auf die ursprüngliche Datei
-    filtered_fasta=$(filter_reads_by_length "$OUTDIR/01-CleanedReads/align_to_ref_unaligned.fa")
+		    # Befehl für Blastn vorbereiten
+		    #blastn -task megablast -db "$DATABASE_PATH" -num_threads "$THREADS" -outfmt '6 qseqid sacc stitle ssciname nident qlen' -max_target_seqs 1 -max_hsps 1 -query "$filtered_fasta" > "$ncbi_unbinned_dir"
 
-    # Ausgabe-TSV-Dateipfad festlegen
-    ncbi_unbinned_dir="$OUTDIR/02-Classification/out_ncbi.tsv"
+		    # Ausgabe, dass der Vorgang abgeschlossen ist und Protokoll in die Datei schreiben für BLASTn
+		    echo "$(datetime.done) BLASTn abgeschlossen." | tee -a "$BLASTN_LOG"
+		    echo "$(datetime.done) BLASTn abgeschlossen" >> "$G_LOG_FILE"
+		    echo "$(datetime.done) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
 
-    # Befehl für Blastn vorbereiten
-    blastn -task megablast -db "$DATABASE_PATH" -num_threads "$THREADS" -outfmt '6 qseqid sacc stitle ssciname nident qlen' -max_target_seqs 1 -max_hsps 1 -query "$filtered_fasta" > "$ncbi_unbinned_dir"
+		    # Korrekter Pfad zur TSV-Datei zurückgeben
+		    echo "$ncbi_unbinned_dir"
+		}
 
-    # Ausgabe, dass der Vorgang abgeschlossen ist und Protokoll in die Datei schreiben für BLASTn
-    echo "$(datetime.done) BLASTn abgeschlossen." | tee -a "$BLASTN_LOG"
-    echo "$(datetime.done) BLASTn abgeschlossen" >> "$G_LOG_FILE"
-    echo "$(datetime.done) ------------------------------------------------------------------------------------------------------------------------" >> "$G_LOG_FILE"
+		# Aufruf der Funktion
+		run_blastn "$OUTDIR/01-CleanedReads/align_to_ref_unaligned_filtered.fa"
 
-    # Korrekter Pfad zur TSV-Datei zurückgeben
-    echo "$ncbi_unbinned_dir"
-}
+	fi
 
-# Aufruf der Funktion
-run_blastn "$OUTDIR/01-CleanedReads/align_to_ref_unaligned.fa"
+	#-------------------------------------------------------------------------------------------------------------------------------------
 
-fi
+	# Ausgabe von BLAST neu anordnen
+	# Verzeichnis, in dem sich die TSV-RAW-Datei befindet
+	NCBI_RAW="$OUTDIR/02-Classification/out_ncbi.tsv"
 
-#-------------------------------------------------------------------------------------------------------------------------------------
-
-# Ausgabe von BLAST neu anordnen
-# Verzeichnis, in dem sich die TSV-RAW-Datei befindet
-NCBI_RAW="$ncbi_unbinned_dir"
-
-# Verzeichnis, in dem sich die TSV-MODIFIED-Datei befinden wird
-NCBI_RESTRUCTURED="$OUTDIR/03-Results/res_ncbi.tsv"
-
-# Pfad zum Verzeichnis des R-Skripts (Übergeordnetes Verzeichnis)
-R_SCRIPT_DIR="/home/drk/tdcs/R"
-
-# Rufe das R-Skript auf und übergebe den Pfad zur Ausgabedatei
-Rscript "$R_SCRIPT_DIR/restructure_raw_to_genus.R" "$NCBI_RAW" "$NCBI_RESTRUCTURED"
- 
-#-------------------------------------------------------------------------------------------------------------------------------------
-# Eingabedatei
-EINGABEDATEI="$NCBI_RESTRUCTURED"
-extract_output() {
-    # Ausgabedatei im CSV-Format
-    AUSGABEDATEI="$OUTDIR/03-Results/res_ncbi.csv"
-
-    # Trennzeichen für die TSV-Datei
-    TRENNZEICHEN=$'\t'
-
-    # Leere Ausgabedatei erstellen
-    touch $AUSGABEDATEI
-
-    # Header in die Ausgabedatei schreiben (CSV-Format)
-    echo "Stamm,Count" > $AUSGABEDATEI
-
-    # Ergebnisdatei zeilenweise verarbeiten (ohne Header)
-    tail -n +2 "$EINGABEDATEI" | while IFS=$'\t' read -r GENUS TOTAL_COUNT; do
-        # Ersetze alle Kommas in den Feldern durch Punkte
-        GENUS=$(echo "$GENUS" | sed 's/,/./g')
-        TOTAL_COUNT=$(echo "$TOTAL_COUNT" | sed 's/,/./g')
-        
-        # Genus und Zählwert in die Ausgabedatei schreiben (im CSV-Format)
-        echo "$GENUS,$TOTAL_COUNT" >> $AUSGABEDATEI
-    done
-}
-
-# Aufruf der Funktion zur Extraktion des NCBI-Output
-extract_output
-
-fi
-
-#-------------------------------------------------------------------------------------------------------------------------------------
-# Starte Shiny App zur Datenauswertung
-
-# Shiny App zur Datenauswertung
-shiny_gui() {
-	# Verzeichnis, in dem sich die CSV-Datei befindet
-	TSV_DIR="$OUTDIR/03-Results"
-
-	# Pfad zur CSV-Datei
-	TSV_FILE="$TSV_DIR/res_ncbi.csv"
+	# Verzeichnis, in dem sich die TSV-MODIFIED-Datei befinden wird
+	NCBI_RESTRUCTURED="$OUTDIR/03-Results/res_ncbi.tsv"
 
 	# Pfad zum Verzeichnis des R-Skripts (Übergeordnetes Verzeichnis)
 	R_SCRIPT_DIR="/home/drk/tdcs/R"
 
-	# Definiere den Pfad zur Protokolldatei für BLASTn
-	RSCRIPT_LOG="$OUTDIR/03-Results/r_plots.log"
+	# Rufe das R-Skript auf und übergebe den Pfad zur Ausgabedatei
+	Rscript "$R_SCRIPT_DIR/restructure_raw_to_genus.R" "$NCBI_RAW" "$NCBI_RESTRUCTURED"
 
-	# Erstelle das Verzeichnis, falls es nicht vorhanden ist
-	mkdir -p "$(dirname "$RSCRIPT_LOG")"
 
-	# Ausgabe des Startzeitpunkts in die Protokolldatei für BLASTn
-	echo "$(datetime.task) Starte R-Skript" >> "$RSCRIPT_LOG"
+	#-------------------------------------------------------------------------------------------------------------------------------------
+	# Starte Shiny App zur Datenauswertung
 
-	# Übergabe der Werte an das R-Skript.
-	# Setze den Pfad zur Ausgabedatei als Umgebungsvariable
-	export TSV_PATH="$TSV_FILE"
-	export FASTQ_PATH="$INFQ"
+	# Shiny App zur Datenauswertung
+	shiny_gui() {
+		# Verzeichnis, in dem sich die CSV-Datei befindet
+		TSV_DIR="$OUTDIR/03-Results"
 
-	# R-Skript aufrufen
-	Rscript "$R_SCRIPT_DIR/plot_script.R" "$TSV_PATH" "$FASTQ_PATH" &
+		# Pfad zur CSV-Datei
+		TSV_FILE="$TSV_DIR/res_ncbi.csv"
+
+		# Pfad zum Verzeichnis des R-Skripts (Übergeordnetes Verzeichnis)
+		R_SCRIPT_DIR="/home/drk/tdcs/R"
+
+		# Definiere den Pfad zur Protokolldatei für BLASTn
+		RSCRIPT_LOG="$OUTDIR/03-Results/r_plots.log"
+
+		# Erstelle das Verzeichnis, falls es nicht vorhanden ist
+		mkdir -p "$(dirname "$RSCRIPT_LOG")"
+
+		# Ausgabe des Startzeitpunkts in die Protokolldatei für BLASTn
+		echo "$(datetime.task) Starte R-Skript" >> "$RSCRIPT_LOG"
+
+		# Übergabe der Werte an das R-Skript.
+		# Setze den Pfad zur Ausgabedatei als Umgebungsvariable
+		export TSV_PATH="$TSV_FILE"
+		export FASTQ_PATH="$INFQ"
+
+		# R-Skript aufrufen
+		Rscript "$R_SCRIPT_DIR/plot_script.R" "$TSV_PATH" "$FASTQ_PATH" &
+
+		# Warte eine kurze Zeit, um sicherzustellen, dass die Shiny-App gestartet wurde
+		sleep 2
+
+		# Öffne den Webbrowser mit der Shiny-App
+		xdg-open "http://127.0.0.1:4010"
+
+		# Ausgabe, dass der Vorgang abgeschlossen ist und Protokoll in die Datei schreiben für BLASTn
+		echo "$(datetime.done) Übergabe an R-Skript abgeschlossen." | tee -a "$RSCRIPT_LOG"
+		echo "$(datetime.done) Übergabe an R-Skript abgeschlossen." | tee -a "$G_LOG_FILE"
+
+	}
 
 	# Warte eine kurze Zeit, um sicherzustellen, dass die Shiny-App gestartet wurde
-	sleep 2
+	sleep 20 
 
-	# Öffne den Webbrowser mit der Shiny-App
-	xdg-open "http://127.0.0.1:4010"
+	# Aufruf der Funktion Shiny GUI
+	shiny_gui
 
-	# Ausgabe, dass der Vorgang abgeschlossen ist und Protokoll in die Datei schreiben für BLASTn
-	echo "$(datetime.done) Übergabe an R-Skript abgeschlossen." | tee -a "$RSCRIPT_LOG"
-	echo "$(datetime.done) Übergabe an R-Skript abgeschlossen." | tee -a "$G_LOG_FILE"
-
-}
-
-# Warte eine kurze Zeit, um sicherzustellen, dass die Shiny-App gestartet wurde
-sleep 20 
-
-# Aufruf der Funktion Shiny GUI
-shiny_gui
+	sleep 120
 
 done
