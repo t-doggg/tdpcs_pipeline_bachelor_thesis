@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Versionsnummer definieren
-VERSION="0.09a"
+VERSION="0.04b"
 
 INFQ="$2"
 OUTDIR="$4"
