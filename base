@@ -1,4 +1,8 @@
 #!/bin/bash
+## ToDo. Manache Pfade sind noch hard coded. Pfade sollten noch möglichst fluid erstellt werden,
+## damit es problemlos auf jedem Computer laufen kann.
+## check-Funktion noch ausbauen, sobald Conda env available ist. Dann auf unterschiedliche Module checken
+## GUI ohne Commandlines wäre noch etwas 
 
 # Versionsnummer definieren
 VERSION="0.04b"
