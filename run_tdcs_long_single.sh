@@ -245,7 +245,7 @@ else
 	    ncbi_unbinned_dir="$OUTDIR/02-Classification/out_ncbi.tsv"
 
 	    # Befehl für Blastn vorbereiten
-	    #blastn -task megablast -db "$DATABASE_PATH" -num_threads "$THREADS" -outfmt '6 qseqid sacc stitle ssciname nident qlen' -max_target_seqs 1 -max_hsps 1 -query "$filtered_fasta" > "$ncbi_unbinned_dir"
+	    blastn -task megablast -db "$DATABASE_PATH" -num_threads "$THREADS" -outfmt '6 qseqid sacc stitle ssciname nident qlen' -max_target_seqs 1 -max_hsps 1 -query "$filtered_fasta" > "$ncbi_unbinned_dir"
 
 	    # Ausgabe, dass der Vorgang abgeschlossen ist und Protokoll in die Datei schreiben für BLASTn
 	    echo "$(datetime.done) BLASTn abgeschlossen." | tee -a "$BLASTN_LOG"
